@@ -3,10 +3,6 @@
 Waste collections in Belgium are shown in an app but also on a website: https://www.recycleapp.be/home
 This binding gets the next waste collections for your address.
 
-## Supported Things
-
-To come
-
 ## Thing Configuration
 
 | Parameter       | type    | description                                          | Required |
@@ -15,7 +11,7 @@ To come
 | Street          | String  | Your Street                                          | true     |
 | HouseNumber     | String  | Your housenumber                                     | true     |
 | refreshInterval | Integer | The refresh interval in HOURS (default=12)           | true     |
-| Language        | String  | In what language do you want to see the collections  | fa lse   |
+| Language        | String  | In what language do you want to see the collections  | false   |
 
 ## Channels
 
@@ -29,5 +25,5 @@ _Note that it is planned to generate some part of this based on the XML files wi
 
 ## Full Example
 
-To come
+Thing recycleappbelgium:Collection:home "Waste@Home" [Zip="1234", Street="OpenHAB street", HouseNumber="1"]
 
