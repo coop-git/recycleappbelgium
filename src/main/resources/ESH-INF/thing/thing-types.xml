@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="recycleappbelgium"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="https://openhab.org/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="https://openhab.org/schemas/thing-description/v1.0.0 https://openhab.org/schemas/thing-description-1.0.0.xsd">
+
+	<!-- Sample Thing Type -->
+	<thing-type id="Collection">
+		<label>RecycleappBelgium Binding Thing</label>
+		<description>Sample thing for RecycleappBelgium Binding</description>
+
+		<channels>
+			<channel id="NextCollection" typeId="NextCollection"/>
+		</channels>
+
+		<config-description>
+			<parameter name="Zip" type="text" required="true">
+				<label>Postal code</label>
+				<description>This is your postal code (eg 1000)</description>
+			</parameter>
+			<parameter name="Street" type="text" required="true">
+				<label>Street</label>
+				<description>This is your streetname</description>
+			</parameter>
+			<parameter name="HouseNumber" type="text" required="true">
+				<label>House Number</label>
+				<description>This is your house number</description>
+			</parameter>
+			<parameter name="refreshInterval" type="integer" required="true" min="2">
+				<label>Refresh time interval</label>
+				<description>Interval in HOURS to fetch collections</description>
+				<default>12</default>
+			</parameter>
+			<parameter name="Language" type="text" required="true">
+				<label>Your language</label>
+				<description>Show the collections in what language?</description>
+				<options>
+					<option value="nl">NL</option>
+					<option value="fr">FR</option>
+					<option value="en">EN</option>
+					<option value="de">DE</option>
+				</options>
+			</parameter>
+		</config-description>
+
+	</thing-type>
+
+	<!-- Sample Channel Type -->
+	<channel-type id="NextCollection">
+		<item-type>String</item-type>
+		<label>Next Waste Collection</label>
+		<description>Sample channel for RecycleappBelgium Binding</description>
+	</channel-type>
+
+</thing:thing-descriptions>
