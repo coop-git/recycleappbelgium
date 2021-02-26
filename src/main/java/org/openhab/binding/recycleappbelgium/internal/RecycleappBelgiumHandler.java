@@ -59,6 +59,8 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
     String ZipId = "";
     String StreetId = "";
     String Collection = "";
+    String language = "";
+    String delimiter = "***";
 
     public RecycleappBelgiumHandler(Thing thing) {
         super(thing);
@@ -74,12 +76,10 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        logger.debug("Start initializing!");
         this.config = getConfigAs(RecycleappBelgiumConfiguration.class);
         updateStatus(ThingStatus.UNKNOWN);
         startAutomaticRefresh();
         updateStatus(ThingStatus.ONLINE);
-        logger.debug("Finished initializing!");
     }
 
     private void startAutomaticRefresh() {
@@ -89,11 +89,11 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
     private void refreshProcess() {
         logger.info("Start fetching next waste collection...");
         Token = parseToken();
-        ZipId = parsePostalCode();
-        StreetId = parseStreet();
-        Collection = parseCollection();
         if (!Token.equals("")) {
             logger.debug("Token: {}", Token);
+            ZipId = parsePostalCode();
+            StreetId = parseStreet();
+            Collection = parseCollection();    
             logger.debug("Zip id: {}", ZipId);
             logger.debug("Street id: {}", StreetId);
             // logger.info("Collections: {}", Collection);
@@ -131,17 +131,18 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
                 CollectionDate = CollectionDate.substring(0, 10);
                 JsonObject fractionObject = itemsObject.get("fraction").getAsJsonObject();
                 JsonObject nameObject = fractionObject.get("name").getAsJsonObject();
-
-                Collections.add(CollectionDate + "xxx" + nameObject.get(config.Language).getAsString());
+                language = config.Language.toLowerCase();
+                Collections.add(CollectionDate + "xxx" + nameObject.get(language).getAsString());
             }
             ParsedCollection = "";
-
+            PreviousCollectionDate = "";
+            CollectionDate = "";
             for (Integer i = 1; i <= Collections.size(); i++) {
                 String[] parts = Collections.get(i - 1).split("xxx");
                 CollectionDate = parts[0];
                 Fraction = parts[1];
                 if (CollectionDate.equals(PreviousCollectionDate)) {
-                    ParsedCollection = ParsedCollection + Fraction;
+                    ParsedCollection = ParsedCollection + delimiter + Fraction;
                 } else {
                     ParsedCollection = ParsedCollection + "(" + CollectionDate + ")" + Fraction;
                 }

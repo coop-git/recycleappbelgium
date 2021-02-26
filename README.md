@@ -1,7 +1,8 @@
 # RecycleappBelgium Binding
 
 Waste collections in Belgium are shown in an app but also on a website: https://www.recycleapp.be/home
-This binding gets the next waste collections for your address.
+This binding gets the next waste collections for your address in the next 6 days (as from tomorrow).
+If nothing is to be collected, the channel will not be updated.
 
 ## Thing Configuration
 
@@ -18,6 +19,8 @@ This binding gets the next waste collections for your address.
 | channel  | type   | description                                     |
 |----------|--------|-------------------------------------------------|
 | NextCollection    | String | Readonly - Date + type of collections  |
+
+Format: (YYYY-MM-DD)Collection1***Collection2...
 
 ## Full Example
 
