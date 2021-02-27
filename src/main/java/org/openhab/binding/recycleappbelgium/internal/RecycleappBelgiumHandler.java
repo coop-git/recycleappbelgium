@@ -162,7 +162,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
         StartDate = sdf.format(cal.getTime());
 
         cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH, 6);
+        cal.add(Calendar.DAY_OF_MONTH, config.daysToCheck);
         EndDate = sdf.format(cal.getTime());
 
         try {

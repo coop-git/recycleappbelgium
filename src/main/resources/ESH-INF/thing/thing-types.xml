@@ -41,6 +41,11 @@
 					<option value="de">DE</option>
 				</options>
 			</parameter>
+			<parameter name="daysToCheck" type="integer" required="true" min="1">
+				<label>Days to check</label>
+				<description>How many days in the future to check for the next Collection(s)</description>
+				<default>6</default>
+			</parameter>
 		</config-description>
 
 	</thing-type>

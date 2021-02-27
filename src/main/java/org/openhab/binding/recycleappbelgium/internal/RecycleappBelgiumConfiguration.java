@@ -27,4 +27,5 @@ public class RecycleappBelgiumConfiguration {
     public String HouseNumber;
     public Integer refreshInterval;
     public String Language;
+    public Integer daysToCheck;
 }
