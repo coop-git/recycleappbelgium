@@ -56,11 +56,13 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
     String URL = "";
     JsonParser parser = new JsonParser();
     String Token = "";
+    String accessToken = "";
     String ZipId = "";
     String StreetId = "";
     String Collection = "";
     String language = "";
     String delimiter = "***";
+    String message = "";
 
     public RecycleappBelgiumHandler(Thing thing) {
         super(thing);
@@ -88,28 +90,47 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
 
     private void refreshProcess() {
         logger.info("Start fetching next waste collection...");
-        Token = parseToken();
-        if (!Token.equals("")) {
-            logger.debug("Token: {}", Token);
+        accessToken = "";
+        if (config.token == null) { 
+            Token = "";
+            message = "No token found in settings.";
+        } else {
+            Token = config.token;
+            if (!Token.equals("")) {
+                accessToken = parseToken();
+            } else {
+                message = "No valid token found in settings.";
+            }
+        }
+        
+        if (!accessToken.equals("")) {
+            logger.debug("Token: {}", accessToken);
             ZipId = parsePostalCode();
             StreetId = parseStreet();
-            Collection = parseCollection();    
+            Collection = parseCollection();
+            if (Collection.equals(""))  {
+                message = "Nothing to show...";
+            } else {
+                message = Collection;
+            }
             logger.debug("Zip id: {}", ZipId);
             logger.debug("Street id: {}", StreetId);
-            // logger.info("Collections: {}", Collection);
-            for (Channel channel : getThing().getChannels()) {
-                ChannelUID channelUID = channel.getUID();
-                String channelID = channelUID.getId();
-                if (channelID.equals(NEXT_COLLECTION)) {
-                    if (!Collection.equals("")) {
-                        logger.debug("Next Collection: {}", Collection);
-                        updateState(channelUID, StringType.valueOf(Collection));
-                    }
-                }
-            }
         } else {
-            logger.info("Empty token");
+            message = "Could not fetch token from website.";
         }
+//        for (Channel channel : getThing().getChannels()) {
+//            ChannelUID channelUID = channel.getUID();
+//            String channelID = channelUID.getId();
+//            if (channelID.equals(NEXT_COLLECTION)) {
+//                logger.debug("Next Collection: {}", Collection);
+//                updateState(channelUID, StringType.valueOf(Collection));
+//            }
+//        }
+        ChannelUID channel;
+        channel = new ChannelUID(getThing().getUID(), NEXT_COLLECTION);
+        updateState(channel, StringType.valueOf(message)); 
+
+
     }
 
     private String parseCollection() {
@@ -124,8 +145,6 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
             JsonObject jsonObject = jsonTree.getAsJsonObject();
             JsonArray itemsArray = jsonObject.getAsJsonArray("items");
             for (JsonElement ia : itemsArray) {
-                // Counter++;
-
                 JsonObject itemsObject = ia.getAsJsonObject();
                 CollectionDate = itemsObject.get("timestamp").getAsString();
                 CollectionDate = CollectionDate.substring(0, 10);
@@ -170,7 +189,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
                     .getFrom("https://recycleapp.be/api/app/v1/collections?zipcodeId=" + ZipId + "&streetId=" + StreetId
                             + "&houseNumber=" + config.HouseNumber + "&fromDate=" + StartDate + "&untilDate=" + EndDate
                             + "&size=100")
-                    .withHeader("Authorization", Token).withHeader("x-consumer", "recycleapp.be").getContentAsString();
+                    .withHeader("Authorization", accessToken).withHeader("x-consumer", "recycleapp.be").getContentAsString();
         } catch (IOException e) {
             return "";
         }
@@ -196,7 +215,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
         try {
             return HttpRequestBuilder
                     .getFrom("https://recycleapp.be/api/app/v1/streets?q=" + config.Street + "&zipcodes=" + ZipId)
-                    .withHeader("Authorization", Token).withHeader("x-consumer", "recycleapp.be").getContentAsString();
+                    .withHeader("Authorization", accessToken).withHeader("x-consumer", "recycleapp.be").getContentAsString();
         } catch (IOException e) {
             return "";
         }
@@ -221,7 +240,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
     private String getPostalCodeJSON() {
         URL = "https://recycleapp.be/api/app/v1/zipcodes?q=" + config.Zip;
         try {
-            return HttpRequestBuilder.getFrom(URL).withHeader("Authorization", Token)
+            return HttpRequestBuilder.getFrom(URL).withHeader("Authorization", accessToken)
                     .withHeader("x-consumer", "recycleapp.be").getContentAsString();
         } catch (IOException e) {
             return "";
@@ -243,13 +262,12 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
     private String getTokenJSON() {
         try {
             return HttpRequestBuilder.getFrom("https://www.recycleapp.be/api/app/v1/access-token").withHeader(
-                    "x-secret",
-                    "8a9pIQlfYpgmJZD15KdK70MCTR2xyD0EAvOmi9HCBfiBUY4n34ytxQmqo3AP2OET6tssYy6R4Be6N2M2GtiX3AcbiNxR8G7pOalN45dXPZ4emKE2c1nimx9B1YFciutJwFZHYHI2Qpzo0E0GCDHkg5")
+                    "x-secret", Token)
                     // 2021:
                     // 8a9pIQlfYpgmJZD15KdK70MCTR2xyD0EAvOmi9HCBfiBUY4n34ytxQmqo3AP2OET6tssYy6R4Be6N2M2GtiX3AcbiNxR8G7pOalN45dXPZ4emKE2c1nimx9B1YFciutJwFZHYHI2Qpzo0E0GCDHkg5
                     // 2020:
                     // Qp4KmgmK2We1ydc9Hxso5D6K0frz3a9raj2tqLjWN5n53TnEijmmYz78pKlcma54sjKLKogt6f9WdnNUci6Gbujnz6b34hNbYo4DzyYRZL5yzdJyagFHS15PSi2kPUc4v2yMck81yFKhlk2aWCTe93
-                    .withHeader("x-consumer", "recycleapp.be").getContentAsString();
+                   .withHeader("x-consumer", "recycleapp.be").getContentAsString();
         } catch (IOException e) {
             return "";
         }

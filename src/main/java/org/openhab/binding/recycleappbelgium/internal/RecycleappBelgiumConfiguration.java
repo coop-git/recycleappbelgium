@@ -28,4 +28,5 @@ public class RecycleappBelgiumConfiguration {
     public Integer refreshInterval;
     public String Language;
     public Integer daysToCheck;
+    public String token;
 }

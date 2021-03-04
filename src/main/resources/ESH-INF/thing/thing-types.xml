@@ -7,7 +7,7 @@
 	<!-- Sample Thing Type -->
 	<thing-type id="Collection">
 		<label>RecycleappBelgium Binding Thing</label>
-		<description>Sample thing for RecycleappBelgium Binding</description>
+		<description>Thing for RecycleappBelgium Binding</description>
 
 		<channels>
 			<channel id="NextCollection" typeId="NextCollection"/>
@@ -46,6 +46,10 @@
 				<description>How many days in the future to check for the next Collection(s)</description>
 				<default>6</default>
 			</parameter>
+			<parameter name="token" type="text" required="true">
+				<label>Token</label>
+				<description>Token found on recycleapp.be for API calls</description>
+			</parameter>
 		</config-description>
 
 	</thing-type>
@@ -54,7 +58,7 @@
 	<channel-type id="NextCollection">
 		<item-type>String</item-type>
 		<label>Next Waste Collection</label>
-		<description>Sample channel for RecycleappBelgium Binding</description>
+		<description>Channel for RecycleappBelgium Binding</description>
 	</channel-type>
 
 </thing:thing-descriptions>
