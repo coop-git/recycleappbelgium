@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2021 Contributors to the openHAB project
+ * Copyright (c) 2010-2022 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -53,6 +53,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
 
     String httpResponse = "";
     String URL = "";
+    String baseURL = "https://api.fostplus.be/recycle-public/app/v1/";
     JsonParser parser = new JsonParser();
     String Token = "";
     String accessToken = "";
@@ -183,9 +184,8 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
 
         try {
             return HttpRequestBuilder
-                    .getFrom("https://recycleapp.be/api/app/v1/collections?zipcodeId=" + ZipId + "&streetId=" + StreetId
-                            + "&houseNumber=" + config.HouseNumber + "&fromDate=" + StartDate + "&untilDate=" + EndDate
-                            + "&size=100")
+                    .getFrom(baseURL + "collections?zipcodeId=" + ZipId + "&streetId=" + StreetId + "&houseNumber="
+                            + config.HouseNumber + "&fromDate=" + StartDate + "&untilDate=" + EndDate + "&size=100")
                     .withHeader("Authorization", accessToken).withHeader("x-consumer", "recycleapp.be")
                     .getContentAsString();
         } catch (IOException e) {
@@ -211,8 +211,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
 
     private String getStreetJSON() {
         try {
-            return HttpRequestBuilder
-                    .getFrom("https://recycleapp.be/api/app/v1/streets?q=" + config.Street + "&zipcodes=" + ZipId)
+            return HttpRequestBuilder.postTo(baseURL + "streets?q=" + config.Street + "&zipcodes=" + ZipId)
                     .withHeader("Authorization", accessToken).withHeader("x-consumer", "recycleapp.be")
                     .getContentAsString();
         } catch (IOException e) {
@@ -237,7 +236,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
     }
 
     private String getPostalCodeJSON() {
-        URL = "https://recycleapp.be/api/app/v1/zipcodes?q=" + config.Zip;
+        URL = baseURL + "zipcodes?q=" + config.Zip;
         try {
             return HttpRequestBuilder.getFrom(URL).withHeader("Authorization", accessToken)
                     .withHeader("x-consumer", "recycleapp.be").getContentAsString();
@@ -260,8 +259,7 @@ public class RecycleappBelgiumHandler extends BaseThingHandler {
 
     private String getTokenJSON() {
         try {
-            return HttpRequestBuilder.getFrom("https://www.recycleapp.be/api/app/v1/access-token")
-                    .withHeader("x-secret", Token)
+            return HttpRequestBuilder.getFrom(baseURL + "access-token").withHeader("x-secret", Token)
                     // 2021:
                     // 8a9pIQlfYpgmJZD15KdK70MCTR2xyD0EAvOmi9HCBfiBUY4n34ytxQmqo3AP2OET6tssYy6R4Be6N2M2GtiX3AcbiNxR8G7pOalN45dXPZ4emKE2c1nimx9B1YFciutJwFZHYHI2Qpzo0E0GCDHkg5
                     // 2020:
